@@ -137,6 +137,8 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Load-18.txt" />
+    <Text Include="Load-one.txt" />
     <Text Include="Load1.txt" />
     <Text Include="Load2.txt" />
   </ItemGroup>

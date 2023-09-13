@@ -41,25 +41,25 @@ void DispLoad(LoadNode* L)
 {
     LoadNode* p = L->next; // p 指向首结点
     printf(" begin ->\n");
-    cout << "-----------------------------------------------" << endl;
-    cout << "| " << "ID" << " | " << setw(20) << "name" << " | " << setw(6) << "length" << " | " << "change" << " |" << endl;
+    cout << "---------------------------------------------------------" << endl;
+    cout << "| " << "ID" << " | " << setw(30) << "name" << " | " << setw(6) << "length" << " | " << "change" << " |" << endl;
     while (p != NULL)
     {
-        cout << "-----------------------------------------------" << endl;
-        cout << "| " << setw(2) << p->data->i << " | " << setw(20) << p->data->name << " | " << setw(6) << p->data->length << " | " << setw(6) << p->data->tag << " |" << endl;
+        cout << "---------------------------------------------------------" << endl;
+        cout << "| " << setw(2) << p->data->i << " | " << setw(30) << p->data->name << " | " << setw(6) << p->data->length << " | " << setw(6) << p->data->tag << " |" << endl;
         p = p->next;
     }
-    cout << "-----------------------------------------------" << endl;
+    cout << "---------------------------------------------------------" << endl;
     printf(" -> end\n");
 }
 
 void DispElem(Elem* data)
 {
-    cout << "-----------------------------------------------" << endl;
-    cout << "| " << "ID" << " | " << setw(20) << "name" << " | " << setw(6) << "length" << " | " << "change" << " |" << endl;
-    cout << "-----------------------------------------------" << endl;
-    cout << "| " << setw(2) << data->i << " | " << setw(20) << data->name << " | " << setw(6) << data->length << " | " << setw(6) << data->tag << " |" << endl;
-    cout << "-----------------------------------------------" << endl;
+    cout << "---------------------------------------------------------" << endl;
+    cout << "| " << "ID" << " | " << setw(30) << "name" << " | " << setw(6) << "length" << " | " << "change" << " |" << endl;
+    cout << "---------------------------------------------------------" << endl;
+    cout << "| " << setw(2) << data->i << " | " << setw(30) << data->name << " | " << setw(6) << data->length << " | " << setw(6) << data->tag << " |" << endl;
+    cout << "---------------------------------------------------------" << endl;
 }
 
 bool InsertElem(LoadNode*& L, int i, Elem data)
@@ -226,29 +226,31 @@ void InFile(string file)
     cout << "Enter name";
     cin.getline(data, 40);
     outfile << data << endl;
-    cout << "Enter length";
-    cin >> length;
-    cin.ignore();
-    outfile << length << endl;
-    cout << "Enter change";
-    cin >> change;
-    cin.ignore();
-    outfile << change << endl;
+    //cout << "Enter length";
+    //cin >> length;
+    //cin.ignore();
+    //outfile << length << endl;
+    //cout << "Enter change";
+    //cin >> change;
+    //cin.ignore();
+    //outfile << change << endl;
     outfile.close();
 }
 
+// 以行为单位读取txt文件内站点信息
+// .name .length .tag 根据需求修改
 void OutFile(string file, Elem data[], int n)
 {
     ifstream infile;
     infile.open(file);
 
-    cout << "Reading from the file" << endl;
+    cout << "Reading from the " << file << endl;
 
     for (int i = 0; i < n; i++)
     {
         data[i].i = i+1;
         infile >> data[i].name;
-        infile >> data[i].length;
+        //infile >> data[i].length;
         infile >> data[i].tag;
     }
 
@@ -301,4 +303,109 @@ void Suggestion(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode*
         cout << "->" << "最后在一号线的" << end << "下车\n" << endl;
         return;
     }
+}
+
+// 统计换乘点个数
+int change(LoadNode* L)
+{
+    int sum = 0;
+    LoadNode* p = L->next;
+    while (p != NULL)
+    {
+        if (p->data->tag == 'y')
+        {
+            sum++;
+        }
+        p = p->next;
+    }
+    return sum;
+}
+
+// 寻找最近的那个换乘点，并获取该指针
+bool Find_nearest(LoadNode* L, LoadNode*& CNode)
+{
+    LoadNode* p = L->next;
+    while (p != NULL)
+    {
+        if (p->data->tag == 'y')
+        {
+            CNode = p;
+            return true;
+        }
+    }
+    return false;
+}
+
+// 总和两个站点间的距离，依次加每个站离上一站的 length
+double LengthSum(LoadNode*be,LoadNode*CNode)
+{
+    double sumLength = 0;
+    LoadNode* p = be->next;
+    while (p != NULL&&p->data!=CNode->data)
+    {
+        sumLength += p->data->length;
+        p = p->next;
+    }
+    sumLength += p->data->length;
+    return sumLength;
+}
+
+void Suggestion2(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode* L2, LoadNode* L22)
+{
+    LoadNode * bn1;
+    LoadNode* bn11;
+    LocateElemByName(L1, begin, bn1);
+    LocateElemByName(L11, begin, bn11);
+    LoadNode* bn2;
+    LoadNode* bn22;
+    LocateElemByName(L2, begin, bn2);
+    LocateElemByName(L22, begin, bn22);
+
+    if (Locate(L1, begin) && Locate(L1, end))
+    {
+        cout << "->" << "请直接从 1 号线的" << begin << "上车" << endl;
+        cout << "->" << "无需换乘，可从" << end << "下车\n" << endl;
+        return;
+    }
+    if (Locate(L2, begin) && Locate(L2, end))
+    {
+        cout << "->" << "请直接从 18 号线的" << begin << "上车" << endl;
+        cout << "->" << "无需换乘，可从" << end << "下车\n" << endl;
+        return;
+    }
+    if (Locate(L1, begin) && Locate(L2, end))
+    {
+        LoadNode* change1, * change2;
+        
+        cout << "->" << "请直接从一号线的" << begin << "上车" << endl;
+        if (LocateElemByTag(bn1, 'y', change1))
+        {
+            cout << "->" << "并在" << change1->data->name << "换乘到二号线" << endl;
+        }
+        else if(LocateElemByTag(bn11, 'y', change2))
+        {
+            cout << "->" << "并在" << change2->data->name << "换乘到二号线" << endl;
+        }
+        cout << "->" << "最后在二号线的" << end << "下车\n" << endl;
+        return;
+    }
+
+    // 如果 begin 在 L2，end 在 L1
+    if (Locate(L1, end) && Locate(L2, begin))
+    {
+        LoadNode* change1, * change2;
+        
+        cout << "->" << "请直接从 18 号线的" << begin << "上车" << endl;
+        if (LocateElemByTag(bn2, 'y', change1))
+        {
+            cout << "->" << "并在" << change1->data->name << "换乘到二号线" << endl;
+        }
+        else if(LocateElemByTag(bn22, 'y', change2))
+        {
+            cout << "->" << "并在" << change2->data->name << "换乘到二号线" << endl;
+        }
+        cout << "->" << "最后在 1 号线的" << end << "下车\n" << endl;
+        return;
+    }
+
 }

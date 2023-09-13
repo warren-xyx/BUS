@@ -37,3 +37,7 @@ void InFile(string file);
 void OutFile(string file, Elem data[], int n);
 
 void Suggestion(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode* L2, LoadNode* L22);
+
+bool Find_nearest(LoadNode* L, LoadNode*& CNode);
+
+void Suggestion2(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode* L2, LoadNode* L22);

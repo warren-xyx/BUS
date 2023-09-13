@@ -43,5 +43,11 @@
     <Text Include="Load1.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="Load-one.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="Load-18.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>
