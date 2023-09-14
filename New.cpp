@@ -213,6 +213,7 @@ bool Locate(LoadNode* L, string name)
         return true;
 }
 
+// 以行为单位向txt文件写入站点数据
 void InFile(string file)
 {
     float length;
@@ -226,14 +227,14 @@ void InFile(string file)
     cout << "Enter name";
     cin.getline(data, 40);
     outfile << data << endl;
-    //cout << "Enter length";
-    //cin >> length;
-    //cin.ignore();
-    //outfile << length << endl;
-    //cout << "Enter change";
-    //cin >> change;
-    //cin.ignore();
-    //outfile << change << endl;
+    cout << "Enter length";
+    cin >> length;
+    cin.ignore();
+    outfile << length << endl;
+    cout << "Enter change";
+    cin >> change;
+    cin.ignore();
+    outfile << change << endl;
     outfile.close();
 }
 
@@ -250,13 +251,14 @@ void OutFile(string file, Elem data[], int n)
     {
         data[i].i = i+1;
         infile >> data[i].name;
-        //infile >> data[i].length;
         infile >> data[i].tag;
+        infile >> data[i].length;
     }
 
     infile.close();
 }
-// 根据 begin 和 end 给出一条好的建议
+/*
+* // 根据 begin 和 end 给出一条好的建议
 void Suggestion(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode* L2, LoadNode* L22)
 {
     // 找到 L1，L2 中的换乘站点
@@ -304,37 +306,7 @@ void Suggestion(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode*
         return;
     }
 }
-
-// 统计换乘点个数
-int change(LoadNode* L)
-{
-    int sum = 0;
-    LoadNode* p = L->next;
-    while (p != NULL)
-    {
-        if (p->data->tag == 'y')
-        {
-            sum++;
-        }
-        p = p->next;
-    }
-    return sum;
-}
-
-// 寻找最近的那个换乘点，并获取该指针
-bool Find_nearest(LoadNode* L, LoadNode*& CNode)
-{
-    LoadNode* p = L->next;
-    while (p != NULL)
-    {
-        if (p->data->tag == 'y')
-        {
-            CNode = p;
-            return true;
-        }
-    }
-    return false;
-}
+*/
 
 // 总和两个站点间的距离，依次加每个站离上一站的 length
 double LengthSum(LoadNode*be,LoadNode*CNode)
@@ -350,61 +322,122 @@ double LengthSum(LoadNode*be,LoadNode*CNode)
     return sumLength;
 }
 
+// 
 void Suggestion2(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode* L2, LoadNode* L22)
 {
-    LoadNode * bn1;
-    LoadNode* bn11;
-    LocateElemByName(L1, begin, bn1);
-    LocateElemByName(L11, begin, bn11);
-    LoadNode* bn2;
-    LoadNode* bn22;
-    LocateElemByName(L2, begin, bn2);
-    LocateElemByName(L22, begin, bn22);
-
+    // 在同一条线路
     if (Locate(L1, begin) && Locate(L1, end))
     {
+        LoadNode* bn1;
+        LoadNode* ed1;
+        LocateElemByName(L1, begin, bn1);
+        LocateElemByName(L1, end, ed1);
         cout << "->" << "请直接从 1 号线的" << begin << "上车" << endl;
         cout << "->" << "无需换乘，可从" << end << "下车\n" << endl;
+        if (bn1->data->i < ed1->data->i)
+        {
+            cout << "大约" << LengthSum(bn1,ed1) << endl;
+        }
+        else
+        {
+            cout << "大约" << LengthSum(ed1, bn1) << endl;
+        }
+        
         return;
     }
     if (Locate(L2, begin) && Locate(L2, end))
     {
+        LoadNode* bn1;
+        LoadNode* ed1;
+        LocateElemByName(L2, begin, bn1);
+        LocateElemByName(L2, end, ed1);
         cout << "->" << "请直接从 18 号线的" << begin << "上车" << endl;
         cout << "->" << "无需换乘，可从" << end << "下车\n" << endl;
+        if (bn1->data->i < ed1->data->i)
+        {
+            cout << "大约" << LengthSum(bn1, ed1) << endl;
+        }
+        else
+        {
+            cout << "大约" << LengthSum(ed1, bn1) << endl;
+        }
         return;
     }
+    // 不在同一条线路
     if (Locate(L1, begin) && Locate(L2, end))
     {
+        LoadNode* bn1;
+        LoadNode* bn11;
+        LocateElemByName(L1, begin, bn1);
+        LocateElemByName(L11, begin, bn11);
+        LoadNode* ed1;
+        LoadNode* ed11;
+        LocateElemByName(L2, end, ed1);
+        LocateElemByName(L22, end, ed11);
+
         LoadNode* change1, * change2;
         
         cout << "->" << "请直接从一号线的" << begin << "上车" << endl;
         if (LocateElemByTag(bn1, 'y', change1))
         {
             cout << "->" << "并在" << change1->data->name << "换乘到二号线" << endl;
+            cout << "大约"<< LengthSum(bn1,change1) <<endl;
         }
-        else if(LocateElemByTag(bn11, 'y', change2))
+        else if(LocateElemByTag(bn11, 'y', change1))
         {
-            cout << "->" << "并在" << change2->data->name << "换乘到二号线" << endl;
+            cout << "->" << "并在" << change1->data->name << "换乘到二号线" << endl;
+            cout << "大约" << LengthSum(bn11, change1)+bn11->data->length-change1->data->length << endl;
         }
-        cout << "->" << "最后在二号线的" << end << "下车\n" << endl;
+
+        if (LocateElemByName(ed1, change1->data->name, change2))
+        {
+            cout << "->" << "最后在二号线的" << end << "下车\n" << endl;
+            cout << "大约" << LengthSum(ed1, change2) + ed1->data->length << endl;
+        }
+        else if (LocateElemByName(ed11, change1->data->name, change2))
+        {
+            cout << "->" << "最后在二号线的" << end << "下车\n" << endl;
+            cout << "大约" << LengthSum(ed11, change2) + ed11->data->length - change2->data->length << endl;
+        }
         return;
     }
 
     // 如果 begin 在 L2，end 在 L1
     if (Locate(L1, end) && Locate(L2, begin))
     {
+        LoadNode* bn1;
+        LoadNode* bn11;
+        LocateElemByName(L2, begin, bn1);
+        LocateElemByName(L22, begin, bn11);
+        LoadNode* ed1;
+        LoadNode* ed11;
+        LocateElemByName(L1, end, ed1);
+        LocateElemByName(L11, end, ed11);
+
         LoadNode* change1, * change2;
-        
+
         cout << "->" << "请直接从 18 号线的" << begin << "上车" << endl;
-        if (LocateElemByTag(bn2, 'y', change1))
+        if (LocateElemByTag(bn1, 'y', change1))
         {
-            cout << "->" << "并在" << change1->data->name << "换乘到二号线" << endl;
+            cout << "->" << "并在" << change1->data->name << "换乘到 1 号线" << endl;
+            cout << "大约" << LengthSum(bn1, change1) << endl;
         }
-        else if(LocateElemByTag(bn22, 'y', change2))
+        else if (LocateElemByTag(bn11, 'y', change1))
         {
-            cout << "->" << "并在" << change2->data->name << "换乘到二号线" << endl;
+            cout << "->" << "并在" << change1->data->name << "换乘到 1 号线" << endl;
+            cout << "大约" << LengthSum(bn11, change1)+bn11->data->length-change1->data->length << endl;
         }
-        cout << "->" << "最后在 1 号线的" << end << "下车\n" << endl;
+
+        if (LocateElemByName(ed1, change1->data->name, change2))
+        {
+            cout << "->" << "最后在 1 号线的" << end << "下车\n" << endl;
+            cout << "大约" << LengthSum(ed1, change2) + ed1->data->length << endl;
+        }
+        else if (LocateElemByName(ed11, change1->data->name, change2))
+        {
+            cout << "->" << "最后在 1 号线的" << end << "下车\n" << endl;
+            cout << "大约" << LengthSum(ed11, change2) + ed11->data->length- change2->data->length << endl;
+        }
         return;
     }
 
