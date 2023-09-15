@@ -26,7 +26,7 @@ bool InsertElem(LoadNode*& L, int i, Elem data);
 
 bool DeleteById(LoadNode*& L, int i, Elem& data);
 
-bool DeleteByName(LoadNode*& L, string name_delete, Elem& data_daleted);
+bool DeleteByName(LoadNode*& L, string name_delete, Elem& data_deleted);
 
 bool AmendElem(LoadNode*& L, string name, Elem data);
 
@@ -37,5 +37,9 @@ bool LocateElemByTag(LoadNode* L, char tag, LoadNode*& e);
 void InFile(string file);
 
 void OutFile(string file, Elem data[], int n);
+
+bool Locate(LoadNode* L, string name);
+
+double LengthSum(LoadNode* be, LoadNode* CNode);
 
 void Suggestion2(string begin, string end, LoadNode* L1, LoadNode* L11, LoadNode* L2, LoadNode* L22);

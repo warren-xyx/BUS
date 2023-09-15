@@ -93,7 +93,7 @@ int main() {
 			cin >> t;
 			if (t == 1)
 			{
-				int i;
+				// int i;
 				Elem data = {};
 				string name;
 				cout << "删除站的名称：";
@@ -106,7 +106,7 @@ int main() {
 			}
 			else if (t == 2)
 			{
-				int i;
+				// int i;
 				Elem data = {};
 				string name;
 				cout << "删除站的名称：";
@@ -120,7 +120,31 @@ int main() {
 		}
 		else if (in == 3) // 修改
 		{
-			continue;
+			cout << "给 L1 修改站点：" << 1 << endl;
+			cout << "给 L2 修改站点" << 2 << endl;
+			int t = 0;
+			cout << "修改哪一条线路上的站点：";
+			cin >> t;
+			string name;
+			cout << "你想修改哪一站的信息" << endl;
+			cout << "该站名为：";
+			cin >> name;
+			
+			Elem data = {};
+			cout << "修改后名称：";
+			cin >> data.name;
+			cout << "修改后该站与前一站的距离：";
+			cin >> data.length;
+			cout << "修改后该站是否为换乘站：";
+			cin >> data.tag;
+			if (t == 1)
+			{
+				AmendElem(L1, name, data);
+			}
+			else if (t == 2)
+			{
+				AmendElem(L2, name, data);
+			}
 		}
 		else if (in == 4) // 查站点
 		{

@@ -122,7 +122,7 @@ bool DeleteById(LoadNode*& L, int i, Elem& data_deleted)
     }
 }
 
-bool DeleteByName(LoadNode*& L, string name_delete, Elem& data_daleted)
+bool DeleteByName(LoadNode*& L, string name_delete, Elem& data_deleted)
 {
     int j = 0;
     LoadNode* p = L, * q;
@@ -136,7 +136,7 @@ bool DeleteByName(LoadNode*& L, string name_delete, Elem& data_daleted)
     else
     {
         q = p->next;
-        data_daleted = *q->data;
+        data_deleted = *q->data;
         p->next = q->next;
         free(q);
         p = p->next;
