@@ -41,8 +41,13 @@ int main() {
 		cout << "修改站点操作：" << 3 << endl;
 		cout << "查询站点操作：" << 4 << endl;
 		cout << "查询路线操作：" << 5 << endl;
+		cout << "退出：" << 6 << endl;
 		cout << "你的输入：" ;
 		cin >> in;
+		if (in == 6)
+		{
+			break;
+		}
 		if (in == 1) //增加
 		{
 			int t = 0;
@@ -148,7 +153,38 @@ int main() {
 		}
 		else if (in == 4) // 查站点
 		{
-			continue;
+			int t = 0;
+			cout << "查询 L1 的站点：" << 1 << endl;
+			cout << "查询 L2 的站点" << 2 << endl;
+			cout << "你选择：";
+			cin >> t;
+			cout << "你想要查询的站点的名称：";
+			string name;
+			cin >> name;
+			if (t == 1)
+			{
+				LoadNode* e;
+				if (LocateElemByName(L1, name, e))
+				{
+					DispElem(e->data);
+				}
+				else
+				{
+					cout << "该站点不在 L1 上，请重新操作" << endl;
+				}
+			}
+			else if (t == 2)
+			{
+				LoadNode* e;
+				if (LocateElemByName(L2, name, e))
+				{
+					DispElem(e->data);
+				}
+				else
+				{
+					cout << "该站点不在 L2 上，请重新操作" << endl;
+				}
+			}
 		}
 		else if (in == 5) // 查路线
 		{
